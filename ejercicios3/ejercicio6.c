@@ -10,11 +10,7 @@
 
 int main(void)
 {
-	int matrix[TAM][TAM] = {{1, 0, 0, 0},
-							{0, 1, 0, 0},
-							{0, 0, 1, 0},
-							{0, 0, 0, 1}};
-
+	int matrix[TAM][TAM] = {{1, 0, 0, 0},{0, 1, 0, 0},{0, 0, 1, 0},{0, 0, 0, 1}};
 	int rvector[TAM]={1,1,1,1};
 	int SIZE = sizeof(int);
 	int comm_sz, my_rani;
