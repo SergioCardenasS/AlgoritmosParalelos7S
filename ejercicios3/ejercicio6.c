@@ -5,13 +5,13 @@
 
 #define TAM 4
 
-//compilar: mpicc -std=c99  ejercicio6.c -o ejercicio6.out    
+//compilar: mpicc  ejercicio6.c -o ejercicio6.out
 //ejecutar: mpirun -n 5 ./ejercicio6.out
 
 int main(void)
 {
 	int matrix[TAM][TAM] = {{1, 0, 0, 0},{0, 1, 0, 0},{0, 0, 1, 0},{0, 0, 0, 1}};
-	int rvector[TAM]={1,1,1,1};
+	int rvector[TAM]={1,2,3,4};
 	int SIZE = sizeof(int);
 	int comm_sz, my_rani;
 

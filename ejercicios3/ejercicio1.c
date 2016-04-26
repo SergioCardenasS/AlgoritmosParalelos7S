@@ -12,7 +12,7 @@ double max = -999999999;
 double min = 999999999;
 int bins = 5;
 
-int FindBin(double data, double* bin_maxes, int bins);
+int Search(double data, double* bin_maxes, int bins);
 
 int main(int argc, char **argv) 
 {
@@ -34,16 +34,13 @@ int main(int argc, char **argv)
         bin_maxes = new double[bins+1];
         send = new double[n/bins+1];
 
-        int* local_bin_counts= new int[bins];
-        local_bin_counts = (int*) malloc((bins)*sizeof(int));
-        for(j = 0; j < bins; ++j)
-                local_bin_counts[j] = 0;
-
+        int* counts= new int[bins];
+        counts = (int*) malloc((bins)*sizeof(int));
+        for(j = 0; j < bins; ++j) counts[j] = 0;
       
         int* bin_counts = new int[bins];
         bin_counts = (int*) malloc((bins)*sizeof(int));
-        for(j = 0; j < bins; ++j)
-                bin_counts[j] = 0;
+        for(j = 0; j < bins; ++j) bin_counts[j] = 0;
 
         for (i=0; i<n; i++)
         {
@@ -55,8 +52,7 @@ int main(int argc, char **argv)
         }
 
         bin_width = (max - min) / bins;
-        for (i=0; i<bins+1;i++)
-            bin_maxes[i] = min + bin_width*(i);
+        for (i=0; i<bins+1;i++) bin_maxes[i] = min + bin_width*(i);
 
         for(i = 1; i < comm_sz; ++i) 
         {
@@ -72,9 +68,9 @@ int main(int argc, char **argv)
 
         for(i = 1; i < comm_sz; ++i)
         {
-            MPI_Recv(local_bin_counts, bins, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(counts, bins, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             for(j = 0; j < bins; ++j)
-                bin_counts[j] += local_bin_counts[j];
+                bin_counts[j] += counts[j];
         }
         for (i=0;i<bins;i++)
             printf("subinter vals %d : %d vals \n", i, bin_counts[i]);
@@ -92,17 +88,17 @@ int main(int argc, char **argv)
         send = new double[n/bins+1];
         MPI_Recv(send, n_data, MPI_DOUBLE, 0, 4, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        int* local_bin_counts= new int[bins];
-        local_bin_counts = (int *) malloc((bins)*sizeof(int));
+        int* counts= new int[bins];
+        counts = (int *) malloc((bins)*sizeof(int));
         for(j = 0; j < bins; ++j)
-                local_bin_counts[j] = 0;
+                counts[j] = 0;
 
         for (i=0;i<n_data;i++)
         {
-            bin = FindBin(send[i],bin_maxes,n_maxes);
-            local_bin_counts[bin]++;
+            bin = Search(send[i],bin_maxes,n_maxes);
+            counts[bin]++;
         }
-        MPI_Send(local_bin_counts, bins, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(counts, bins, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
 
     MPI_Finalize(); 
@@ -110,7 +106,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-int FindBin(double data, double* bin_maxes, int bins)
+int Search(double data, double* bin_maxes, int bins)
 {
     for (int i=0;i<bins-1;i++)
     {

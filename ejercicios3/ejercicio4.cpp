@@ -7,6 +7,7 @@ using namespace std;
 //Ejecutar: mpiexec -np 4 ./ejercicio4.out 12 
 
 int abs_(int n){if(n<0)return -n;return n;}
+
 int main(int argc, char * argv[])
 {
 	int comm_size, current_rank;
@@ -49,7 +50,7 @@ int main(int argc, char * argv[])
 	}
 
 	if(current_rank == 0)
-		cout << "Total : " << total << endl;
+		cout << "Global sum : " << total << endl;
 
 	MPI_Finalize();
 	return 0;
